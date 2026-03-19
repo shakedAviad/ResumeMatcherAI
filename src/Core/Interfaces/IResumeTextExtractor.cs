@@ -1,4 +1,4 @@
-﻿namespace Application.Interfaces
+﻿namespace Core.Interfaces
 {
     public interface IResumeTextExtractor
     {

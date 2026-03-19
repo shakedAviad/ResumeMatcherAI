@@ -1,6 +1,6 @@
 ﻿using Domain.Models;
 
-namespace Application.Results
+namespace Core.Results
 {
     public class SearchCandidatesResult
     {

@@ -1,9 +1,9 @@
-﻿using Application.Commands;
-using Application.Interfaces;
-using Application.Results;
-using Application.Services;
+﻿using Core.Commands;
+using Core.Interfaces;
+using Core.Results;
+using Core.Services;
 
-namespace Application.Workflows
+namespace Core.Workflows
 {
     public class ResumeSearchWorkflow
     {

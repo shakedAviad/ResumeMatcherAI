@@ -1,7 +1,7 @@
-﻿using Application.Interfaces;
+﻿using Core.Interfaces;
 using Domain.Models;
 
-namespace Application.Services
+namespace Core.Services
 {
     public class CandidateSearchService
     {

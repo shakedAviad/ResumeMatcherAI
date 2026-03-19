@@ -1,8 +1,8 @@
-﻿using Application.Commands;
-using Application.Interfaces;
-using Application.Results;
+﻿using Core.Commands;
+using Core.Interfaces;
+using Core.Results;
 
-namespace Application.Workflows
+namespace Core.Workflows
 {
     public class ResumeIngestionWorkflow
     {

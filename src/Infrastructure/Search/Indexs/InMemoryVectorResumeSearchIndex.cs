@@ -1,4 +1,4 @@
-﻿using Application.Interfaces;
+﻿using Core.Interfaces;
 using Domain.Models;
 using Infrastructure.Search.Records;
 using Microsoft.Extensions.VectorData;

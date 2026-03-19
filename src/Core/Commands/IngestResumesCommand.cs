@@ -1,4 +1,4 @@
-﻿namespace Application.Commands
+﻿namespace Core.Commands
 {
     public class IngestResumesCommand
     {

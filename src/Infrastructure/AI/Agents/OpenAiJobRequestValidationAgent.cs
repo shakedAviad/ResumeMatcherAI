@@ -1,4 +1,4 @@
-﻿using Application.Interfaces;
+﻿using Core.Interfaces;
 using Domain.Models;
 using Infrastructure.AI.Prompts;
 using Microsoft.Agents.AI;

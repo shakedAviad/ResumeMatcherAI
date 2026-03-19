@@ -1,4 +1,4 @@
-﻿namespace Application.Results
+﻿namespace Core.Results
 {
     public class IngestResumesResult
     {
