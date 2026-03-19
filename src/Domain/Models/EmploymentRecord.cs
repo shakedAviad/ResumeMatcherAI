@@ -1,6 +1,6 @@
 ﻿namespace Domain.Models
 {
-    public  class EmploymentRecord
+    public class EmploymentRecord
     {
         public string CompanyName { get; init; } = string.Empty;
 

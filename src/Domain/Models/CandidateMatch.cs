@@ -1,6 +1,6 @@
 ﻿namespace Domain.Models
 {
-    public  class CandidateMatch
+    public class CandidateMatch
     {
         public string CandidateId { get; init; } = string.Empty;
 

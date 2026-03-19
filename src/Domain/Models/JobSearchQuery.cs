@@ -1,6 +1,6 @@
 ﻿namespace Domain.Models
 {
-    public  class JobSearchQuery
+    public class JobSearchQuery
     {
         public string OriginalUserPrompt { get; init; } = string.Empty;
 

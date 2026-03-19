@@ -1,9 +1,6 @@
 ﻿using Application.Commands;
 using Application.Interfaces;
 using Application.Results;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Workflows
 {
@@ -22,7 +19,7 @@ namespace Application.Workflows
             _resumeSearchIndex = resumeSearchIndex;
         }
 
-        public async Task<IngestResumesResult> ExecuteAsync(IngestResumesCommand command,CancellationToken cancellationToken = default)
+        public async Task<IngestResumesResult> ExecuteAsync(IngestResumesCommand command, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(command);
 
@@ -38,7 +35,7 @@ namespace Application.Workflows
             }
 
             var failedFilePaths = command.FilePaths.Where(filePath => string.IsNullOrWhiteSpace(filePath)).ToList();
-            
+
             foreach (var filePath in command.FilePaths.Where(filePath => !string.IsNullOrWhiteSpace(filePath)))
             {
                 try

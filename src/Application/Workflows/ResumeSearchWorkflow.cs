@@ -2,10 +2,6 @@
 using Application.Interfaces;
 using Application.Results;
 using Application.Services;
-using Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Workflows
 {
@@ -22,12 +18,12 @@ namespace Application.Workflows
             _candidateRankingAgent = candidateRankingAgent;
         }
 
-        public async Task<SearchCandidatesResult> ExecuteAsync(SearchCandidatesCommand command,CancellationToken cancellationToken = default)
+        public async Task<SearchCandidatesResult> ExecuteAsync(SearchCandidatesCommand command, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(command);
             ArgumentNullException.ThrowIfNull(command.UserPrompt);
 
-            var jobSearchQuery = await _jobRequestValidationAgent.ValidateAsync(command.UserPrompt,cancellationToken);
+            var jobSearchQuery = await _jobRequestValidationAgent.ValidateAsync(command.UserPrompt, cancellationToken);
 
             if (!jobSearchQuery.IsValid)
             {

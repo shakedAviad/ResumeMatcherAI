@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Application.Commands
+﻿namespace Application.Commands
 {
-    public  class SearchCandidatesCommand
+    public class SearchCandidatesCommand
     {
         public string UserPrompt { get; init; } = string.Empty;
 

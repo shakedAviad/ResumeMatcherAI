@@ -1,12 +1,9 @@
 ﻿using Application.Interfaces;
 using Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Application.Services
 {
-    public  class CandidateSearchService
+    public class CandidateSearchService
     {
         private readonly IResumeSearchIndex _resumeSearchIndex;
 
@@ -24,7 +21,7 @@ namespace Application.Services
 
             ArgumentNullException.ThrowIfNull(jobSearchQuery);
 
-            if (maxResults <= 0) 
+            if (maxResults <= 0)
             {
                 throw new ArgumentException($"Max results cannot be a negative number: {maxResults}");
             }

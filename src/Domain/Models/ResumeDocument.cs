@@ -1,11 +1,11 @@
 ﻿namespace Domain.Models
 {
 
-    public  class ResumeDocument
+    public class ResumeDocument
     {
-        public string CandidateId { get; init; } = string.Empty;
+        public string CandidateId { get; set; } = string.Empty;
 
-        public string SourceFileName { get; init; } = string.Empty;
+        public string SourceFileName { get; set; } = string.Empty;
 
         public string FullName { get; init; } = string.Empty;
 

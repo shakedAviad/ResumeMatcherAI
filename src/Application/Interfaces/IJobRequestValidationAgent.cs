@@ -6,5 +6,5 @@ namespace Application.Interfaces
     {
         Task<JobSearchQuery> ValidateAsync(string userPrompt, CancellationToken cancellationToken = default);
     }
-   
+
 }
