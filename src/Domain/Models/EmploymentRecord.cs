@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Domain.Models
+﻿namespace Domain.Models
 {
-    public sealed class EmploymentRecord
+    public  class EmploymentRecord
     {
         public string CompanyName { get; init; } = string.Empty;
 

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Domain.Models
+﻿namespace Domain.Models
 {
 
-    public sealed class ResumeDocument
+    public  class ResumeDocument
     {
         public string CandidateId { get; init; } = string.Empty;
 

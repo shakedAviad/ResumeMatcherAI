@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Domain.Models
+﻿namespace Domain.Models
 {
-    public sealed class CandidateMatch
+    public  class CandidateMatch
     {
         public string CandidateId { get; init; } = string.Empty;
 

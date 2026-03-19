@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Domain.Models
+﻿namespace Domain.Models
 {
-    public sealed class JobSearchQuery
+    public  class JobSearchQuery
     {
         public string OriginalUserPrompt { get; init; } = string.Empty;
 
