@@ -1,21 +1,8 @@
-﻿using Domain.Models;
-using System.Text.Json;
-
-namespace Infrastructure.AI.Prompts
+﻿namespace Infrastructure.AI.Prompts
 {
-    public static class CandidateRankingPrompt
+    public class CandidateRankingPrompt
     {
-        public static string Build(JobSearchQuery jobSearchQuery, IReadOnlyList<ResumeDocument> candidateResumes)
-        {
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true
-            };
-
-            var jobSearchQueryJson = JsonSerializer.Serialize(jobSearchQuery, options);
-            var candidateResumesJson = JsonSerializer.Serialize(candidateResumes, options);
-
-            return $$"""
+        public const string Instructions = $$"""
 You rank candidate resumes for a hiring request.
 
 Your task:
@@ -45,12 +32,7 @@ Expected schema:
   }
 ]
 
-Job search query:
-{{jobSearchQueryJson}}
-
-Candidate resumes:
-{{candidateResumesJson}}
 """;
-        }
+
     }
 }

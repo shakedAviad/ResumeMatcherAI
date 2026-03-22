@@ -2,6 +2,6 @@
 {
     public class IngestResumesCommand
     {
-        public IReadOnlyList<string> FilePaths { get; init; } = [];
+        public string FolderPath { get; init; } = string.Empty;
     }
 }

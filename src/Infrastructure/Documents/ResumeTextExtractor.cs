@@ -1,11 +1,6 @@
 ﻿using Core.Interfaces;
 using DocumentFormat.OpenXml.Packaging;
 
-using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices.Marshalling;
-using System.Text;
-
 namespace Infrastructure.Documents
 {
     public sealed class ResumeTextExtractor : IResumeTextExtractor
@@ -22,7 +17,7 @@ namespace Infrastructure.Documents
                 _ => throw new NotSupportedException($"Unsupported file type: {extension}")
             };
         }
-        
+
         private static string ExtractDocxText(string filePath)
         {
             using var document = WordprocessingDocument.Open(filePath, false);

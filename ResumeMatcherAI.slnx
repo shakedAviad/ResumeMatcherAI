@@ -1,4 +1,8 @@
 <Solution>
+  <Folder Name="/Applications/">
+    <Project Path="src/Applications/Backend.API/Backend.API.csproj" Id="e87aab13-82bc-4019-aac3-75eb3f49fecd" />
+    <Project Path="src/Applications/Frontend.Console/Frontend.Console.csproj" Id="3191fb6d-c21a-4e93-9d5b-a23392064c4e" />
+  </Folder>
   <Project Path="src/Core/Core.csproj" />
   <Project Path="src/Domain/Domain.csproj" />
   <Project Path="src/Infrastructure/Infrastructure.csproj" Id="9ceb4e7d-f4de-470e-8a09-fd89d2479bbb" />

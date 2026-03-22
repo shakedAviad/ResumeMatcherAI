@@ -1,7 +1,7 @@
 ﻿using Core.Interfaces;
 using Domain.Models;
-using Infrastructure.AI.Prompts;
 using Microsoft.Agents.AI;
+using System.Text.Json;
 
 namespace Infrastructure.AI.Agents
 {
@@ -19,7 +19,11 @@ namespace Infrastructure.AI.Agents
             ArgumentNullException.ThrowIfNull(jobSearchQuery);
             ArgumentNullException.ThrowIfNull(candidateResumes);
 
-            var prompt = CandidateRankingPrompt.Build(jobSearchQuery, candidateResumes);
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            var jobSearchQueryJson = JsonSerializer.Serialize(jobSearchQuery, options);
+            var candidateResumesJson = JsonSerializer.Serialize(candidateResumes, options);
+
+            var prompt = $"Job search query: {jobSearchQueryJson}, Candidate resumes:  {candidateResumesJson}";
             var response = await _agent.RunAsync<List<CandidateMatch>>(prompt, cancellationToken: cancellationToken);
             var rankedCandidates = response.Result;
 

@@ -1,10 +1,8 @@
 ﻿namespace Infrastructure.AI.Prompts
 {
-    public static class JobRequestValidationPrompt
+    public class JobRequestValidationPrompt
     {
-        public static string Build(string userPrompt)
-        {
-            return $$"""
+        public const string Instructions = $$"""
 You validate and normalize job-search requests for a resume matching system.
 
 Your task:
@@ -37,9 +35,6 @@ Expected schema:
   "notes": "string"
 }
 
-User prompt:
-{{userPrompt}}
 """;
-        }
     }
 }

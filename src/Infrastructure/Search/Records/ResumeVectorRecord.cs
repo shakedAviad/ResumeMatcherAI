@@ -1,12 +1,9 @@
 ﻿using Domain.Models;
 using Microsoft.Extensions.VectorData;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Infrastructure.Search.Records
 {
-    public  class ResumeVectorRecord
+    public class ResumeVectorRecord
     {
         [VectorStoreKey]
         public string CandidateId { get; set; } = string.Empty;

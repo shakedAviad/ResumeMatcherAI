@@ -1,11 +1,9 @@
 ﻿namespace Infrastructure.AI.Prompts
 {
 
-    public static class ResumeExtractionPrompt
+    public class ResumeExtractionPrompt
     {
-        public static string Build(string resumeText)
-        {
-            return $$"""
+        public const string Instructions = $$"""
                    You are an expert resume parser.
                    
                    Extract structured information from the resume into a strict JSON format.
@@ -14,8 +12,10 @@
                    - Return ONLY valid JSON
                    - Do not add explanations
                    - If a field is missing, return empty string or empty array
-                   - Normalize values (skills, technologies, etc.)
-                   
+                   - Normalize values (skills, technologies, etc.)                   
+                   - CandidateId is mandatory and must always be returned
+                   - CandidateId must be stable and unique for the candidate
+
                    JSON schema:
                    
                    {
@@ -42,9 +42,6 @@
                      ]
                    }
                    
-                   Resume:
-                   {{resumeText}}
                    """;
-        }
     }
 }

@@ -1,9 +1,7 @@
 ﻿namespace Core.Commands
 {
-    public class SearchCandidatesCommand
+    public class SearchCandidatesCommand : BaseUserInputCommand
     {
-        public string UserPrompt { get; init; } = string.Empty;
-
         public int MaxResults { get; init; } = 10;
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Core.Interfaces;
 using Domain.Models;
-using Infrastructure.AI.Prompts;
 using Microsoft.Agents.AI;
 
 namespace Infrastructure.AI.Agents
@@ -16,7 +15,7 @@ namespace Infrastructure.AI.Agents
 
         public async Task<JobSearchQuery> ValidateAsync(string userPrompt, CancellationToken cancellationToken = default)
         {
-            var prompt = JobRequestValidationPrompt.Build(userPrompt);
+            var prompt = $"User prompt: {userPrompt}";
             var resposne = await _agent.RunAsync<JobSearchQuery>(prompt, cancellationToken: cancellationToken);
             var result = resposne.Result;
 

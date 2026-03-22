@@ -1,6 +1,5 @@
 ﻿using Core.Interfaces;
 using Domain.Models;
-using Infrastructure.AI.Prompts;
 using Microsoft.Agents.AI;
 
 namespace Infrastructure.AI.Agents
@@ -17,7 +16,7 @@ namespace Infrastructure.AI.Agents
 
         public async Task<ResumeDocument> ExtractAsync(string sourceFileName, string resumeText, CancellationToken cancellationToken = default)
         {
-            var prompt = ResumeExtractionPrompt.Build(resumeText);
+            var prompt = $"Given resume: {resumeText}";
             var response = await _agent.RunAsync<ResumeDocument>(prompt, cancellationToken: cancellationToken);
             var resume = response?.Result;
 

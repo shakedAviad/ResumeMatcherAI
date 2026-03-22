@@ -1,6 +1,7 @@
 ﻿using Core.Commands;
 using Core.Interfaces;
 using Core.Results;
+using System.Collections.Concurrent;
 
 namespace Core.Workflows
 {
@@ -23,7 +24,7 @@ namespace Core.Workflows
         {
             ArgumentNullException.ThrowIfNull(command);
 
-            if (command.FilePaths is null || command.FilePaths.Count == 0)
+            if (string.IsNullOrEmpty(command.FolderPath))
             {
                 return new IngestResumesResult
                 {
@@ -34,41 +35,39 @@ namespace Core.Workflows
                 };
             }
 
-            var failedFilePaths = command.FilePaths.Where(filePath => string.IsNullOrWhiteSpace(filePath)).ToList();
+            var filePaths = Directory.GetFiles(command.FolderPath);
+            var failedFilePaths = new ConcurrentBag<string>(filePaths.Where(filePath => string.IsNullOrWhiteSpace(filePath)));
 
-            foreach (var filePath in command.FilePaths.Where(filePath => !string.IsNullOrWhiteSpace(filePath)))
-            {
-                try
-                {
-                    var extractedText = await _resumeTextExtractor.ExtractTextAsync(filePath, cancellationToken);
+            await Parallel.ForEachAsync(filePaths.Where(filePath => !string.IsNullOrWhiteSpace(filePath)), async (filePath, cancellationToken) =>
+             {
+                 try
+                 {
+                     var extractedText = await _resumeTextExtractor.ExtractTextAsync(filePath, cancellationToken);
+                     if (string.IsNullOrWhiteSpace(extractedText))
+                     {
+                         failedFilePaths.Add(filePath);
+                     }
+                     else
+                     {
+                         var sourceFileName = Path.GetFileName(filePath);
+                         var resumeDocument = await _resumeExtractionAgent.ExtractAsync(sourceFileName, extractedText, cancellationToken);
 
-                    if (string.IsNullOrWhiteSpace(extractedText))
-                    {
-                        failedFilePaths.Add(filePath);
-                    }
-                    else
-                    {
-                        var sourceFileName = Path.GetFileName(filePath);
-                        var resumeDocument = await _resumeExtractionAgent.ExtractAsync(sourceFileName, extractedText, cancellationToken);
-
-                        await _resumeDocumentStore.SaveAsync(resumeDocument, cancellationToken);
-                        await _resumeSearchIndex.IndexAsync(resumeDocument, cancellationToken);
-                    }
-
-                }
-                catch
-                {
-                    failedFilePaths.Add(filePath);
-                }
-
-            }
+                         await _resumeDocumentStore.SaveAsync(resumeDocument, cancellationToken);
+                         await _resumeSearchIndex.IndexAsync(resumeDocument, cancellationToken);
+                     }
+                 }
+                 catch (Exception ex)
+                 {
+                     failedFilePaths.Add(filePath);
+                 }
+             });
 
             return new IngestResumesResult
             {
-                TotalFilesReceived = command.FilePaths.Count,
-                SuccessfullyProcessedCount = command.FilePaths.Count - failedFilePaths.Count,
+                TotalFilesReceived = filePaths.Length,
+                SuccessfullyProcessedCount = filePaths.Length - failedFilePaths.Count,
                 FailedCount = failedFilePaths.Count,
-                FailedFilePaths = failedFilePaths
+                FailedFilePaths = [.. failedFilePaths]
             };
         }
     }

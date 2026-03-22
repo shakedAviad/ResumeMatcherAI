@@ -38,7 +38,7 @@ namespace Infrastructure.Search.Indexs
             var searchText = BuildSearchText(jobSearchQuery);
             var results = new List<ResumeDocument>();
 
-            await foreach (var result in _collection.SearchAsync(searchText,top: maxResults, cancellationToken: cancellationToken))
+            await foreach (var result in _collection.SearchAsync(searchText, top: maxResults, cancellationToken: cancellationToken))
             {
                 results.Add(result.Record.ResumeDocument);
             }

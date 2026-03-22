@@ -6,13 +6,13 @@ namespace Infrastructure.Storage
 {
     public class ResumeJsonFileStore : IResumeDocumentStore
     {
-        private readonly string _directoryPath;
+        private readonly string _jsonDirectoryPath;        
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-        public ResumeJsonFileStore(string directoryPath)
+        public ResumeJsonFileStore(string jsonDirectoryPath)
         {
-            _directoryPath = directoryPath;
-
+            _jsonDirectoryPath = jsonDirectoryPath;
+            
             _jsonSerializerOptions = new JsonSerializerOptions
             {
                 WriteIndented = true,
@@ -22,7 +22,7 @@ namespace Infrastructure.Storage
 
         public async Task SaveAsync(ResumeDocument resumeDocument, CancellationToken cancellationToken = default)
         {
-            Directory.CreateDirectory(_directoryPath);
+            Directory.CreateDirectory(_jsonDirectoryPath);
 
             var filePath = BuildFilePath(resumeDocument.CandidateId);
             var json = JsonSerializer.Serialize(resumeDocument, _jsonSerializerOptions);
@@ -32,7 +32,12 @@ namespace Infrastructure.Storage
 
         public async Task<IReadOnlyList<ResumeDocument>> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            var filePaths = Directory.GetFiles(_directoryPath, "*.json", SearchOption.TopDirectoryOnly);
+            if (!Directory.Exists(_jsonDirectoryPath))
+            {
+                return [];
+            }
+
+            var filePaths = Directory.GetFiles(_jsonDirectoryPath, "*.json", SearchOption.TopDirectoryOnly);
             var resumes = new List<ResumeDocument>();
 
             foreach (var filePath in filePaths)
@@ -45,12 +50,12 @@ namespace Infrastructure.Storage
 
             return resumes;
         }
-
+        
         private string BuildFilePath(string candidateId)
         {
             var safeFileName = string.Concat(candidateId.Split(Path.GetInvalidFileNameChars(), StringSplitOptions.RemoveEmptyEntries));
 
-            return Path.Combine(_directoryPath, $"{safeFileName}.json");
+            return Path.Combine(_jsonDirectoryPath, $"{safeFileName}.json");
         }
     }
 }
