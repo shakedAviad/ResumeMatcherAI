@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Infrastructure.AI.Prompts
+﻿namespace Infrastructure.AI.Prompts
 {
     public class FileSystemPrompt
     {

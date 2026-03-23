@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Frontend.Console.Auth.Interfaces
+﻿namespace Frontend.Console.Auth.Interfaces
 {
     public interface IAuthApiClient
     {

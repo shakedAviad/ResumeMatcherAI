@@ -7,9 +7,6 @@ using Core.Interfaces;
 using Core.Services;
 using Core.Tools;
 using Core.Workflows;
-using DocumentFormat.OpenXml.Office2010.CustomUI;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
-using DocumentFormat.OpenXml.Office2016.Excel;
 using Domain.Models;
 using Infrastructure.AI.Agents;
 using Infrastructure.AI.Prompts;
@@ -30,7 +27,7 @@ namespace Backend.API
 {
     public static class Extensions
     {
-        extension(WebApplicationBuilder builder) 
+        extension(WebApplicationBuilder builder)
         {
             public WebApplicationBuilder ConfigureServices()
             {
@@ -43,19 +40,19 @@ namespace Backend.API
             public WebApplication BuildApplication()
             {
                 var app = builder.Build();
-                
+
                 if (app.Environment.IsDevelopment())
                 {
                     app.MapOpenApi();
-                    app.UseSwaggerUI(options =>options.SwaggerEndpoint("/openapi/v1.json", "ResumeMatcher API v1"));
+                    app.UseSwaggerUI(options => options.SwaggerEndpoint("/openapi/v1.json", "ResumeMatcher API v1"));
                 }
-                
+
                 app.UseAuthentication();
                 app.UseAuthorization();
 
                 //app.UseHttpsRedirection();
                 app.MapResumeMatcherEndpoints();
-                
+
                 return app;
             }
         }
@@ -65,7 +62,7 @@ namespace Backend.API
             internal IServiceCollection CreateServices(IConfiguration configuration)
             {
                 services.AddEndpointsApiExplorer()
-                    .AddOpenApi()                    
+                    .AddOpenApi()
                     .AddHostedServices()
                     .AddConfiguration(configuration)
                     .AddRAG()
@@ -74,7 +71,7 @@ namespace Backend.API
                     .AddWorkwflows()
                     .AddAuthentication("ResumeMatcher")
                     .AddScheme<ResumeMatcherAuthenticationOptions, ResumeMatcherAuthenticationHandler>("ResumeMatcher", options => { });
-                
+
                 services.AddAuthorization()
                     .AddHttpClient<IAuthValidationApiClient, AuthValidationApiClient>(client => client.BaseAddress = new Uri(SharedConfiguration.BaseBackendAuthAPIURL));
                 return services;
@@ -86,7 +83,7 @@ namespace Backend.API
                 return services;
             }
 
-            private IServiceCollection AddConfiguration(IConfiguration configuration) 
+            private IServiceCollection AddConfiguration(IConfiguration configuration)
             {
                 services.Configure<OpenAiOptions>(configuration.GetSection(OpenAiOptions.SectionName));
                 services.Configure<StorageOptions>(configuration.GetSection(StorageOptions.SectionName));
@@ -111,7 +108,7 @@ namespace Backend.API
                 return services;
             }
 
-            private IServiceCollection AddServices() 
+            private IServiceCollection AddServices()
             {
                 services.AddSingleton<IResumeTextExtractor, ResumeTextExtractor>();
                 services.AddSingleton<IResumeDocumentStore>(sp =>
@@ -211,7 +208,7 @@ namespace Backend.API
                 return services;
             }
 
-            private IServiceCollection AddWorkwflows() 
+            private IServiceCollection AddWorkwflows()
             {
                 services.AddSingleton<CandidateSearchService>();
                 services.AddSingleton<ResumeIngestionWorkflow>();
@@ -220,7 +217,7 @@ namespace Backend.API
 
                 return services;
             }
-            
+
         }
 
         extension(IEndpointRouteBuilder builder)
@@ -236,7 +233,7 @@ namespace Backend.API
                 return builder;
             }
 
-            private static async Task<IResult> IngestAsync(IServiceProvider provider, ResumeIngestionWorkflow workflow ,CancellationToken cancellationToken)
+            private static async Task<IResult> IngestAsync(IServiceProvider provider, ResumeIngestionWorkflow workflow, CancellationToken cancellationToken)
             {
                 var storge = provider.GetRequiredService<IOptions<StorageOptions>>().Value;
                 if (string.IsNullOrWhiteSpace(storge.ResumeFilesDirectory))
@@ -248,7 +245,7 @@ namespace Backend.API
                 return Results.Ok(result);
             }
 
-            
+
             private static async Task<IResult> SearchAsync(BaseRequest request, ResumeSearchWorkflow workflow, CancellationToken cancellationToken)
             {
                 if (string.IsNullOrWhiteSpace(request.UserPrompt))
@@ -259,7 +256,7 @@ namespace Backend.API
                 var result = await workflow.ExecuteAsync(
                     new SearchCandidatesCommand
                     {
-                        UserPrompt = request.UserPrompt,                        
+                        UserPrompt = request.UserPrompt,
                     },
                     cancellationToken);
 
@@ -282,12 +279,12 @@ namespace Backend.API
             }
         }
 
-       
+
         public class BaseRequest
         {
             public string UserPrompt { get; set; } = string.Empty;
         }
-        
+
     }
 }
 

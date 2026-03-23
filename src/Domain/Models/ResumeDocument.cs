@@ -30,5 +30,6 @@
         public IReadOnlyList<string> PreferredLocations { get; init; } = [];
 
         public IReadOnlyList<EmploymentRecord> EmploymentHistory { get; init; } = [];
+
     }
 }

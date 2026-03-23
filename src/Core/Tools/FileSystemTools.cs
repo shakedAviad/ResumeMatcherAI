@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Core.Tools
+﻿namespace Core.Tools
 {
     public class FileSystemTools
     {
@@ -21,7 +17,7 @@ namespace Core.Tools
         {
             return _rootFolder;
         }
-        
+
         public void AddFile(string filePath)
         {
             MoveFile(filePath, Path.Combine(_rootFolder, Path.GetFileName(filePath)));
@@ -32,7 +28,7 @@ namespace Core.Tools
             Guard(folderPath);
             Directory.CreateDirectory(folderPath);
         }
-       
+
         public void MoveFile(string sourceFilePath, string targetFilePath)
         {
             Guard(sourceFilePath);

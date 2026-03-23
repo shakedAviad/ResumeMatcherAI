@@ -1,8 +1,5 @@
 ﻿using Core.Interfaces;
 using Microsoft.Agents.AI;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Infrastructure.AI.Agents
 {
@@ -20,16 +17,16 @@ namespace Infrastructure.AI.Agents
         public async Task<string> ReplyAsync(string userPrompt, CancellationToken cancellationToken = default)
         {
             var prompt = $"User prompt: {userPrompt}";
-            var response = await _agent.RunAsync<string>(prompt,session: _session, cancellationToken: cancellationToken);
-            
-            try 
+            var response = await _agent.RunAsync<string>(prompt, session: _session, cancellationToken: cancellationToken);
+
+            try
             {
                 return response.Result;
-            } 
+            }
             catch (Exception ex)
             {
                 return await ReplyAsync("System error occurred", cancellationToken);
-            }            
+            }
         }
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Domain.Models
+﻿namespace Domain.Models
 {
     public class SharedConfiguration
     {
@@ -10,7 +6,7 @@ namespace Domain.Models
         public const string BaseBackendAuthAPIURL = "http://localhost:5212";
         public const string ResumeIngestionEndpoint = "/api/resumes/ingest";
         public const string ResumeSearchEndpoint = "/api/candidates/search";
-        
+
         public const string ResumeFileSystemEndpoint = "/api/fileSystem/manage";
     }
 }

@@ -1,10 +1,7 @@
 ﻿using Core.Interfaces;
 using Core.Results;
 using Domain.Models;
-using System;
-using System.Collections.Generic;
 using System.Net.Http.Json;
-using System.Text;
 
 namespace Core.Workflows
 {
@@ -18,10 +15,10 @@ namespace Core.Workflows
         {
             _conversationAgent = conversationAgent;
             _routingAgent = routingAgent;
-            _httpClient = httpClient;            
+            _httpClient = httpClient;
         }
 
-        public async Task<string> GetConversationResponse(string userPrompt, CancellationToken cancellationToken = default) 
+        public async Task<string> GetConversationResponse(string userPrompt, CancellationToken cancellationToken = default)
         {
             var routingResult = await _routingAgent.DecideResumeRouteAsync(userPrompt, cancellationToken);
             var responseMessage = routingResult.WorkflowType switch
@@ -46,8 +43,8 @@ namespace Core.Workflows
             var conversationResponse = await _conversationAgent.ReplyAsync(promptForConversation, cancellationToken);
 
             return conversationResponse;
-        }        
+        }
     }
 
-    
+
 }

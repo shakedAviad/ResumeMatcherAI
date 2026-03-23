@@ -6,13 +6,13 @@ namespace Infrastructure.Storage
 {
     public class ResumeJsonFileStore : IResumeDocumentStore
     {
-        private readonly string _jsonDirectoryPath;        
+        private readonly string _jsonDirectoryPath;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
         public ResumeJsonFileStore(string jsonDirectoryPath)
         {
             _jsonDirectoryPath = jsonDirectoryPath;
-            
+
             _jsonSerializerOptions = new JsonSerializerOptions
             {
                 WriteIndented = true,
@@ -50,7 +50,7 @@ namespace Infrastructure.Storage
 
             return resumes;
         }
-        
+
         private string BuildFilePath(string candidateId)
         {
             var safeFileName = string.Concat(candidateId.Split(Path.GetInvalidFileNameChars(), StringSplitOptions.RemoveEmptyEntries));

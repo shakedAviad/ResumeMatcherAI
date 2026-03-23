@@ -1,10 +1,6 @@
 ﻿using Core.Interfaces;
 using Core.Results;
-using Domain.Models;
 using Microsoft.Agents.AI;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Infrastructure.AI.Agents
 {
@@ -23,7 +19,7 @@ namespace Infrastructure.AI.Agents
             var resposne = await _agent.RunAsync<ResumeRouteResult>(prompt, cancellationToken: cancellationToken);
             var result = resposne.Result;
 
-            return result switch 
+            return result switch
             {
                 ResumeRouteResult => result,
                 _ => throw new InvalidOperationException("Unexpected result type from the agent.")

@@ -3,8 +3,6 @@ using Auth.API.Models;
 using Auth.API.Providers;
 using Auth.API.Services;
 using Domain.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.OpenApi;
 
 namespace Auth.API
 {
@@ -35,7 +33,7 @@ namespace Auth.API
                 return app;
             }
         }
-        extension(IServiceCollection services) 
+        extension(IServiceCollection services)
         {
             internal IServiceCollection CreateServices(IConfiguration configuration)
             {
@@ -52,7 +50,7 @@ namespace Auth.API
 
                 return services;
             }
-            private IServiceCollection AddServices() 
+            private IServiceCollection AddServices()
             {
                 services.AddSingleton<IJwtSigningKeyProvider>(sp => new InMemoryJwtSigningKeyProvider());
                 services.AddSingleton<IJwtTokenService, JwtTokenService>();
@@ -61,7 +59,7 @@ namespace Auth.API
         }
         extension(IEndpointRouteBuilder endpoints)
         {
-            internal IEndpointRouteBuilder MapResumeAuthEndpoints() 
+            internal IEndpointRouteBuilder MapResumeAuthEndpoints()
             {
 
                 endpoints.MapGet("/api/auth/token", (IJwtTokenService jwtTokenService) =>
@@ -81,6 +79,6 @@ namespace Auth.API
             }
         }
 
-        
+
     }
 }

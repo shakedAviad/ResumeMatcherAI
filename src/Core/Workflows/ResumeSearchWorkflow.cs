@@ -18,7 +18,7 @@ namespace Core.Workflows
             _candidateRankingAgent = candidateRankingAgent;
         }
 
-        public async Task<SearchCandidatesResult> ExecuteAsync(SearchCandidatesCommand command, CancellationToken cancellationToken = default)
+        public async Task<SearchCandidatesResult>  ExecuteAsync(SearchCandidatesCommand command, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(command);
             ArgumentNullException.ThrowIfNull(command.UserPrompt);

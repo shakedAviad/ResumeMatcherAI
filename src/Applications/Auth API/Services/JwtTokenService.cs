@@ -14,7 +14,7 @@ namespace Auth.API.Services
         private readonly JwtOptions _options;
         private readonly IJwtSigningKeyProvider _signingKeyProvider;
 
-        public JwtTokenService(IOptions<JwtOptions> options,IJwtSigningKeyProvider signingKeyProvider)
+        public JwtTokenService(IOptions<JwtOptions> options, IJwtSigningKeyProvider signingKeyProvider)
         {
             _options = options.Value;
             _signingKeyProvider = signingKeyProvider;
@@ -32,7 +32,7 @@ namespace Auth.API.Services
             };
 
             var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_signingKeyProvider.Key));
-            var signingCredentials = new SigningCredentials(signingKey,SecurityAlgorithms.HmacSha256);
+            var signingCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(
                 issuer: _options.Issuer,
                 audience: _options.Audience,
@@ -83,13 +83,13 @@ namespace Auth.API.Services
                     Subject = subject
                 };
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return new ValidateTokenResponse { IsValid = false };
             }
         }
 
-        private string GetSubject(ClaimsPrincipal principal) 
+        private string GetSubject(ClaimsPrincipal principal)
         {
             return principal.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
                 ?? principal.FindFirst(ClaimTypes.NameIdentifier)?.Value

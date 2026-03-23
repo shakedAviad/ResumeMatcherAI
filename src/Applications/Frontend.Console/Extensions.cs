@@ -8,31 +8,26 @@ using Infrastructure.AI.Agents;
 using Infrastructure.AI.Prompts;
 using Infrastructure.Storage;
 using Microsoft.Agents.AI;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenAI;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Frontend.Console
 {
     public static class Extensions
     {
-        extension(HostApplicationBuilder builder) 
+        extension(HostApplicationBuilder builder)
         {
             public HostApplicationBuilder ConfigureServices()
-            {                
+            {
                 builder.Services.CreateServices(builder.Configuration);
 
                 return builder;
             }
-            public HostApplicationBuilder BuildApplication() 
+            public HostApplicationBuilder BuildApplication()
             {
                 builder.Logging.ClearProviders();
                 builder.Logging.AddConsole();
@@ -40,15 +35,15 @@ namespace Frontend.Console
 
                 return builder;
             }
-            
-            public IServiceProvider CreateProvider() 
+
+            public IServiceProvider CreateProvider()
             {
                 return builder.Build().Services;
             }
         }
-        extension(IServiceCollection services) 
+        extension(IServiceCollection services)
         {
-            internal IServiceCollection CreateServices(ConfigurationManager configuration) 
+            internal IServiceCollection CreateServices(ConfigurationManager configuration)
             {
                 configuration.AddUserSecrets<SecretsManager>(optional: true);
 
@@ -95,9 +90,9 @@ namespace Frontend.Console
                         Name = "ResumeConversationAgent",
                         ChatOptions = new()
                         {
-                            Instructions = ResumeConversationPrompt.Instructions,                            
+                            Instructions = ResumeConversationPrompt.Instructions,
                         },
-                        
+
                         ChatHistoryProvider = new MessageStorage()
 
                     });

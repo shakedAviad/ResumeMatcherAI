@@ -1,8 +1,5 @@
 ﻿using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.Json;
 
 namespace Infrastructure.Storage
@@ -30,7 +27,7 @@ namespace Infrastructure.Storage
             {
                 var json = await File.ReadAllTextAsync(SessionPath, cancellationToken);
 
-                return JsonSerializer.Deserialize<List<ChatMessage>>(json)!;                
+                return JsonSerializer.Deserialize<List<ChatMessage>>(json)!;
             }
 
             return [];

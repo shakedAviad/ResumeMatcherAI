@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Infrastructure.AI.Prompts
+﻿namespace Infrastructure.AI.Prompts
 {
-    public  class ResumeConversationPrompt
+    public class ResumeConversationPrompt
     {
         public const string Instructions = """
 You are a friendly assistant for a resume management system.

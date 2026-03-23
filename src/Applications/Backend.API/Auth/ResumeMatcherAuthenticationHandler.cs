@@ -1,6 +1,4 @@
 ﻿using Backend.API.Auth.Interfaces;
-using DocumentFormat.OpenXml.InkML;
-using DocumentFormat.OpenXml.Office2016.Excel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
@@ -8,7 +6,7 @@ using System.Text.Encodings.Web;
 
 namespace Backend.API.Auth
 {
-    public class ResumeMatcherAuthenticationHandler: AuthenticationHandler<ResumeMatcherAuthenticationOptions>
+    public class ResumeMatcherAuthenticationHandler : AuthenticationHandler<ResumeMatcherAuthenticationOptions>
     {
         private readonly IAuthValidationApiClient _authValidationApiClient;
         private readonly string _bearerPrefix = "Bearer ";
@@ -26,7 +24,7 @@ namespace Backend.API.Auth
             {
                 return AuthenticateResult.NoResult();
             }
-            
+
             if (!authorizationHeader.StartsWith(_bearerPrefix, StringComparison.OrdinalIgnoreCase))
             {
                 return AuthenticateResult.Fail("Invalid authorization scheme.");

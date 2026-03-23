@@ -1,9 +1,6 @@
 ﻿using Core.Commands;
 using Core.Interfaces;
 using Microsoft.Agents.AI;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Infrastructure.AI.Agents
 {

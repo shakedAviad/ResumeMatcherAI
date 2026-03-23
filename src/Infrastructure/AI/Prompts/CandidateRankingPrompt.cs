@@ -28,7 +28,8 @@ Expected schema:
     "fullName": "string",
     "currentTitle": "string",
     "matchScore": 0,
-    "shortExplanation": "string"
+    "shortExplanation": "string",
+    "content": "string"
   }
 ]
 

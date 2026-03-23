@@ -1,8 +1,5 @@
 ﻿using Domain.Models;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Frontend.Console
 {
@@ -16,7 +13,7 @@ namespace Frontend.Console
         public SecretsManager(IConfiguration configuration)
         {
             _configuration = configuration;
-        }        
+        }
     }
 
 }
