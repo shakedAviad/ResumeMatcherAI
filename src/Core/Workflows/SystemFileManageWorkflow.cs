@@ -4,11 +4,11 @@ using Core.Results;
 
 namespace Core.Workflows
 {
-    public class SystemFileWorkflow
+    public class SystemFileManageWorkflow
     {
         private readonly IFileSystemAgent _fileSystemAgent;
 
-        public SystemFileWorkflow(IFileSystemAgent fileSystemAgent)
+        public SystemFileManageWorkflow(IFileSystemAgent fileSystemAgent)
         {
             _fileSystemAgent = fileSystemAgent;
         }

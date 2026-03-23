@@ -6,6 +6,9 @@ using Core.Services;
 using Core.Tools;
 using Core.Workflows;
 using DocumentFormat.OpenXml.Office2010.CustomUI;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using DocumentFormat.OpenXml.Office2016.Excel;
+using Domain.Models;
 using Infrastructure.AI.Agents;
 using Infrastructure.AI.Prompts;
 using Infrastructure.Documents;
@@ -25,15 +28,65 @@ namespace Backend.API
 {
     public static class Extensions
     {
+        extension(WebApplicationBuilder builder) 
+        {
+            public WebApplicationBuilder ConfigureServices()
+            {
+                builder.WebHost.UseUrls(SharedConfiguration.BaseBackendAPIURL);
+                builder.Services.CreateServices(builder.Configuration);
+
+                return builder;
+            }
+
+            public WebApplication BuildApplication()
+            {
+                var app = builder.Build();
+                
+                if (app.Environment.IsDevelopment())
+                {
+                    app.MapOpenApi();
+                    app.UseSwaggerUI(options =>options.SwaggerEndpoint("/openapi/v1.json", "ResumeMatcher API v1"));
+                }
+                
+                //app.UseHttpsRedirection();
+                app.MapResumeMatcherEndpoints();
+                
+                return app;
+            }
+        }
+
         extension(IServiceCollection services)
         {
-            public IServiceCollection AddResumeMatcherServices(IConfiguration configuration)
+            internal IServiceCollection CreateServices(IConfiguration configuration)
+            {
+                services.AddEndpointsApiExplorer()
+                    .AddOpenApi()
+                    .AddHostedServices()
+                    .AddConfiguration(configuration)
+                    .AddRAG()
+                    .AddServices()
+                    .AddAgents()
+                    .AddWorkwflows();
+
+                return services;
+            }
+            private IServiceCollection AddHostedServices()
             {
                 services.AddHostedService<ResumeIndexWarmupService>();
 
+                return services;
+            }
+
+            private IServiceCollection AddConfiguration(IConfiguration configuration) 
+            {
                 services.Configure<OpenAiOptions>(configuration.GetSection(OpenAiOptions.SectionName));
                 services.Configure<StorageOptions>(configuration.GetSection(StorageOptions.SectionName));
 
+                return services;
+            }
+
+            private IServiceCollection AddRAG()
+            {
                 services.AddSingleton<IResumeSearchIndex>(sp =>
                 {
                     var openAiOptions = sp.GetRequiredService<IOptions<OpenAiOptions>>().Value;
@@ -46,6 +99,11 @@ namespace Backend.API
                     return new InMemoryVectorResumeSearchIndex(collection);
                 });
 
+                return services;
+            }
+
+            private IServiceCollection AddServices() 
+            {
                 services.AddSingleton<IResumeTextExtractor, ResumeTextExtractor>();
                 services.AddSingleton<IResumeDocumentStore>(sp =>
                 {
@@ -54,6 +112,11 @@ namespace Backend.API
                     return new ResumeJsonFileStore(storageOptions.ResumeJsonDirectory);
                 });
 
+                return services;
+            }
+
+            private IServiceCollection AddAgents()
+            {
                 services.AddTransient<IChatClient>(sp =>
                 {
                     var openAiOptions = sp.GetRequiredService<IOptions<OpenAiOptions>>().Value;
@@ -80,7 +143,7 @@ namespace Backend.API
                 });
 
                 services.AddSingleton<IJobRequestValidationAgent>(sp =>
-                {                    
+                {
                     var chatClient = sp.GetRequiredService<IChatClient>();
 
                     var agent = chatClient.AsAIAgent(new ChatClientAgentOptions
@@ -123,7 +186,6 @@ namespace Backend.API
                     var storageOptions = sp.GetRequiredService<IOptions<StorageOptions>>().Value;
                     var fileSystemTools = new FileSystemTools(storageOptions.ResumeFilesDirectory);
                     var methods = typeof(FileSystemTools).GetMethods(BindingFlags.Public | BindingFlags.Instance);
-                    
 
                     var agent = chatClient.AsAIAgent(new ChatClientAgentOptions
                     {
@@ -137,19 +199,24 @@ namespace Backend.API
 
                     return new OpenAiFileSystemAgent(agent);
                 });
+                return services;
+            }
 
+            private IServiceCollection AddWorkwflows() 
+            {
                 services.AddSingleton<CandidateSearchService>();
                 services.AddSingleton<ResumeIngestionWorkflow>();
                 services.AddSingleton<ResumeSearchWorkflow>();
-                services.AddSingleton<SystemFileWorkflow>();
+                services.AddSingleton<SystemFileManageWorkflow>();
 
                 return services;
             }
+            
         }
 
         extension(IEndpointRouteBuilder endpoints)
         {
-            public IEndpointRouteBuilder MapResumeMatcherEndpoints()
+            internal IEndpointRouteBuilder MapResumeMatcherEndpoints()
             {
                 endpoints.MapGet("/", () => Results.Ok("ResumeMatcher API is running."));
                 endpoints.MapResumeIngestionEndpoints();
@@ -161,7 +228,7 @@ namespace Backend.API
 
             private IEndpointRouteBuilder MapResumeIngestionEndpoints()
             {
-                endpoints.MapPost("/api/resumes/ingest", IngestAsync)
+                endpoints.MapGet("/api/resumes/ingest", IngestAsync)
                 .WithName("IngestResumes")
                 .WithTags("Resumes");
 
@@ -185,20 +252,20 @@ namespace Backend.API
                 return endpoints;
 
             }
-            private static async Task<IResult> IngestAsync(IngestResumesRequest request, ResumeIngestionWorkflow workflow, CancellationToken cancellationToken)
+            private static async Task<IResult> IngestAsync(IServiceProvider provider, ResumeIngestionWorkflow workflow ,CancellationToken cancellationToken)
             {
-                var command = new IngestResumesCommand
+                var storge = provider.GetRequiredService<IOptions<StorageOptions>>().Value;
+                if (string.IsNullOrWhiteSpace(storge.ResumeFilesDirectory))
                 {
-                    FolderPath = request.FolderPath
-                };
-
-                var result = await workflow.ExecuteAsync(command, cancellationToken);
+                    return Results.BadRequest("Resume Files Directory is required.");
+                }
+                var result = await workflow.ExecuteAsync(storge.ResumeFilesDirectory, cancellationToken);
 
                 return Results.Ok(result);
             }
 
             
-            private static async Task<IResult> SearchAsync(SearchCandidatesRequest request, ResumeSearchWorkflow workflow, CancellationToken cancellationToken)
+            private static async Task<IResult> SearchAsync(BaseRequest request, ResumeSearchWorkflow workflow, CancellationToken cancellationToken)
             {
                 if (string.IsNullOrWhiteSpace(request.UserPrompt))
                 {
@@ -208,8 +275,7 @@ namespace Backend.API
                 var result = await workflow.ExecuteAsync(
                     new SearchCandidatesCommand
                     {
-                        UserPrompt = request.UserPrompt,
-                        MaxResults = request.MaxResults
+                        UserPrompt = request.UserPrompt,                        
                     },
                     cancellationToken);
 
@@ -217,7 +283,7 @@ namespace Backend.API
             }
         }
 
-        private static async Task<IResult> ManageAsync(BaseRequest request, SystemFileWorkflow workflow, CancellationToken cancellationToken)
+        private static async Task<IResult> ManageAsync(BaseRequest request, SystemFileManageWorkflow workflow, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(request.UserPrompt))
             {
@@ -236,14 +302,7 @@ namespace Backend.API
         {
             public string UserPrompt { get; set; } = string.Empty;
         }
-        public class IngestResumesRequest
-        {
-            public string FolderPath { get; set; } = string.Empty;
-        }
-        public class SearchCandidatesRequest : BaseRequest
-        {            
-            public int MaxResults { get; set; } = 10;
-        }
+        
     }
 }
 

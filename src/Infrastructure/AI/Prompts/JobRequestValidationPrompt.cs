@@ -24,6 +24,7 @@ Expected schema:
 {
   "originalUserPrompt": "string",
   "isValid": true,
+  "yearsofexperience:int,
   "validationMessage": "string",
   "normalizedRoleTitle": "string",
   "requiredSkills": ["string"],

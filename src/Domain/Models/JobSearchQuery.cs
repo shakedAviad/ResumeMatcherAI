@@ -6,6 +6,7 @@
 
         public bool IsValid { get; init; }
 
+        public int YearsOfExperience { get; init; }
         public string ValidationMessage { get; init; } = string.Empty;
 
         public string NormalizedRoleTitle { get; init; } = string.Empty;

@@ -21,6 +21,11 @@ namespace Core.Tools
         {
             return _rootFolder;
         }
+        
+        public void AddFile(string filePath)
+        {
+            MoveFile(filePath, Path.Combine(_rootFolder, Path.GetFileName(filePath)));
+        }
 
         public void CreateFolder(string folderPath)
         {

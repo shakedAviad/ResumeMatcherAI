@@ -20,22 +20,9 @@ namespace Core.Workflows
             _resumeSearchIndex = resumeSearchIndex;
         }
 
-        public async Task<IngestResumesResult> ExecuteAsync(IngestResumesCommand command, CancellationToken cancellationToken = default)
+        public async Task<IngestResumesResult> ExecuteAsync(string folderPath, CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(command);
-
-            if (string.IsNullOrEmpty(command.FolderPath))
-            {
-                return new IngestResumesResult
-                {
-                    TotalFilesReceived = 0,
-                    SuccessfullyProcessedCount = 0,
-                    FailedCount = 0,
-                    FailedFilePaths = []
-                };
-            }
-
-            var filePaths = Directory.GetFiles(command.FolderPath);
+            var filePaths = Directory.GetFiles(folderPath);
             var failedFilePaths = new ConcurrentBag<string>(filePaths.Where(filePath => string.IsNullOrWhiteSpace(filePath)));
 
             await Parallel.ForEachAsync(filePaths.Where(filePath => !string.IsNullOrWhiteSpace(filePath)), async (filePath, cancellationToken) =>
