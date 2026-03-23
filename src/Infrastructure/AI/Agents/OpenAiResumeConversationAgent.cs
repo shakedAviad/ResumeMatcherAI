@@ -21,8 +21,15 @@ namespace Infrastructure.AI.Agents
         {
             var prompt = $"User prompt: {userPrompt}";
             var response = await _agent.RunAsync<string>(prompt,session: _session, cancellationToken: cancellationToken);
-
-            return response.Result;
+            
+            try 
+            {
+                return response.Result;
+            } 
+            catch (Exception ex)
+            {
+                return await ReplyAsync("System error occurred", cancellationToken);
+            }            
         }
     }
 }

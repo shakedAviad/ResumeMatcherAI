@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/Applications/">
+    <Project Path="src/Applications/Auth API/Auth.API.csproj" Id="24fda75d-f335-4468-87e2-38b2edbdbbbc" />
     <Project Path="src/Applications/Backend.API/Backend.API.csproj" Id="e87aab13-82bc-4019-aac3-75eb3f49fecd" />
     <Project Path="src/Applications/Frontend.Console/Frontend.Console.csproj" Id="3191fb6d-c21a-4e93-9d5b-a23392064c4e" />
   </Folder>

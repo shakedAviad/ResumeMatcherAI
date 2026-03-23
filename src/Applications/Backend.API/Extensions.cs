@@ -1,4 +1,6 @@
-﻿using Backend.API.Configuration;
+﻿using Backend.API.Auth;
+using Backend.API.Auth.Interfaces;
+using Backend.API.Configuration;
 using Backend.API.Startup;
 using Core.Commands;
 using Core.Interfaces;
@@ -48,6 +50,9 @@ namespace Backend.API
                     app.UseSwaggerUI(options =>options.SwaggerEndpoint("/openapi/v1.json", "ResumeMatcher API v1"));
                 }
                 
+                app.UseAuthentication();
+                app.UseAuthorization();
+
                 //app.UseHttpsRedirection();
                 app.MapResumeMatcherEndpoints();
                 
@@ -60,14 +65,18 @@ namespace Backend.API
             internal IServiceCollection CreateServices(IConfiguration configuration)
             {
                 services.AddEndpointsApiExplorer()
-                    .AddOpenApi()
+                    .AddOpenApi()                    
                     .AddHostedServices()
                     .AddConfiguration(configuration)
                     .AddRAG()
                     .AddServices()
                     .AddAgents()
-                    .AddWorkwflows();
-
+                    .AddWorkwflows()
+                    .AddAuthentication("ResumeMatcher")
+                    .AddScheme<ResumeMatcherAuthenticationOptions, ResumeMatcherAuthenticationHandler>("ResumeMatcher", options => { });
+                
+                services.AddAuthorization()
+                    .AddHttpClient<IAuthValidationApiClient, AuthValidationApiClient>(client => client.BaseAddress = new Uri(SharedConfiguration.BaseBackendAuthAPIURL));
                 return services;
             }
             private IServiceCollection AddHostedServices()
@@ -214,44 +223,19 @@ namespace Backend.API
             
         }
 
-        extension(IEndpointRouteBuilder endpoints)
+        extension(IEndpointRouteBuilder builder)
         {
             internal IEndpointRouteBuilder MapResumeMatcherEndpoints()
             {
-                endpoints.MapGet("/", () => Results.Ok("ResumeMatcher API is running."));
-                endpoints.MapResumeIngestionEndpoints();
-                endpoints.MapCandidateSearchEndpoints();
-                endpoints.MapFileSystemManageEndpoints();
+                var apiAuth = builder.MapGroup("/api").RequireAuthorization();
 
-                return endpoints;
+                apiAuth.MapGet("/resumes/ingest", IngestAsync).WithName("IngestResumes").WithTags("Resumes");
+                apiAuth.MapPost("/candidates/search", SearchAsync).WithName("SearchCandidates").WithTags("Candidates");
+                apiAuth.MapPost("/fileSystem/manage", ManageAsync).WithName("FileSystemManagement").WithTags("FileSystem");
+
+                return builder;
             }
 
-            private IEndpointRouteBuilder MapResumeIngestionEndpoints()
-            {
-                endpoints.MapGet("/api/resumes/ingest", IngestAsync)
-                .WithName("IngestResumes")
-                .WithTags("Resumes");
-
-                return endpoints;
-            }
-            private IEndpointRouteBuilder MapCandidateSearchEndpoints()
-            {
-                endpoints.MapPost("/api/candidates/search", SearchAsync)
-                .WithName("SearchCandidates")
-                .WithTags("Candidates");
-
-                return endpoints;
-            }
-
-            private IEndpointRouteBuilder MapFileSystemManageEndpoints() 
-            {
-                endpoints.MapPost("/api/fileSystem/manage", ManageAsync)
-                .WithName("FileSystemManagement")
-                .WithTags("FileSystem");
-
-                return endpoints;
-
-            }
             private static async Task<IResult> IngestAsync(IServiceProvider provider, ResumeIngestionWorkflow workflow ,CancellationToken cancellationToken)
             {
                 var storge = provider.GetRequiredService<IOptions<StorageOptions>>().Value;
@@ -281,23 +265,24 @@ namespace Backend.API
 
                 return Results.Ok(result);
             }
-        }
-
-        private static async Task<IResult> ManageAsync(BaseRequest request, SystemFileManageWorkflow workflow, CancellationToken cancellationToken)
-        {
-            if (string.IsNullOrWhiteSpace(request.UserPrompt))
+            private static async Task<IResult> ManageAsync(BaseRequest request, SystemFileManageWorkflow workflow, CancellationToken cancellationToken)
             {
-                return Results.BadRequest("UserPrompt is required.");
+                if (string.IsNullOrWhiteSpace(request.UserPrompt))
+                {
+                    return Results.BadRequest("UserPrompt is required.");
+                }
+
+                var result = await workflow.ExecuteAsync(
+                    new BaseUserInputCommand
+                    {
+                        UserPrompt = request.UserPrompt
+                    });
+
+                return Results.Ok(result);
             }
-
-            var result = await workflow.ExecuteAsync(
-                new BaseUserInputCommand 
-                { 
-                    UserPrompt = request.UserPrompt 
-                });
-
-            return Results.Ok(result);
         }
+
+       
         public class BaseRequest
         {
             public string UserPrompt { get; set; } = string.Empty;
