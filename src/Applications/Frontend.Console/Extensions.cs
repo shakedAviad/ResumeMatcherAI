@@ -6,6 +6,7 @@ using Frontend.Console.Auth.Handlers;
 using Frontend.Console.Auth.Interfaces;
 using Infrastructure.AI.Agents;
 using Infrastructure.AI.Prompts;
+using Infrastructure.Storage;
 using Microsoft.Agents.AI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -94,8 +95,10 @@ namespace Frontend.Console
                         Name = "ResumeConversationAgent",
                         ChatOptions = new()
                         {
-                            Instructions = ResumeConversationPrompt.Instructions,
+                            Instructions = ResumeConversationPrompt.Instructions,                            
                         },
+                        
+                        ChatHistoryProvider = new MessageStorage()
 
                     });
 
