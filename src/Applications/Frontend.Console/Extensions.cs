@@ -83,8 +83,7 @@ namespace Frontend.Console
 
                 services.AddScoped<IResumeConversationAgent>(sp =>
                 {
-                    var chatClient = sp.GetRequiredService<IChatClient>();
-
+                    var chatClient = sp.GetRequiredService<IChatClient>();                    
                     var agent = chatClient.AsAIAgent(new ChatClientAgentOptions
                     {
                         Name = "ResumeConversationAgent",

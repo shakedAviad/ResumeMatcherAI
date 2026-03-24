@@ -1,4 +1,7 @@
-﻿using Core.Interfaces;
+﻿using Backend.API.Configuration;
+using Core.Interfaces;
+using Core.Workflows;
+using Microsoft.Extensions.Options;
 
 namespace Backend.API.Startup
 {
@@ -14,17 +17,28 @@ namespace Backend.API.Startup
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             using var scope = _serviceScopeFactory.CreateScope();
-
-            var resumeDocumentStore = scope.ServiceProvider.GetRequiredService<IResumeDocumentStore>();
-            var resumeSearchIndex = scope.ServiceProvider.GetRequiredService<IResumeSearchIndex>();
-            var resumes = await resumeDocumentStore.GetAllAsync(cancellationToken);
-
-            foreach (var resume in resumes)
+            var storage = scope.ServiceProvider.GetRequiredService<IOptions<StorageOptions>>().Value;
+            var folderPath = storage.ResumeJsonDirectory;
+            if (Directory.Exists(folderPath) && Directory.EnumerateFiles(folderPath).Any())
             {
-                cancellationToken.ThrowIfCancellationRequested();
+                var resumeDocumentStore = scope.ServiceProvider.GetRequiredService<IResumeDocumentStore>();
+                var resumeSearchIndex = scope.ServiceProvider.GetRequiredService<IResumeSearchIndex>();
+                var resumes = await resumeDocumentStore.GetAllAsync(cancellationToken);
 
-                await resumeSearchIndex.IndexAsync(resume, cancellationToken);
+                foreach (var resume in resumes)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    await resumeSearchIndex.IndexAsync(resume, cancellationToken);
+                }
             }
+            else
+            {
+                Directory.CreateDirectory(folderPath);
+                var workflow = scope.ServiceProvider.GetRequiredService<ResumeIngestionWorkflow>();
+                await workflow.ExecuteAsync(storage.ResumeFilesDirectory, cancellationToken);
+            }
+
         }
 
         public Task StopAsync(CancellationToken cancellationToken)

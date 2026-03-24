@@ -6,10 +6,11 @@ namespace Infrastructure.Storage
 {
     public class MessageStorage : ChatHistoryProvider
     {
+
         private readonly List<ChatMessage> _messages = [];
         public string? SessionId { get; set; }
 
-        public string SessionPath => Path.Combine("data/messages", $"{SessionId}.json");
+        public string SessionPath => Path.Combine( "..", "..", "..","data/messages", $"{SessionId}.json");
 
         protected override async ValueTask<IEnumerable<ChatMessage>> ProvideChatHistoryAsync(InvokingContext context, CancellationToken cancellationToken = default)
         {
