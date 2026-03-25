@@ -71,6 +71,8 @@ Update `appsettings.json` in **Backend.API**:
       }
     }
 
+Place your resume files (.docx) inside the configured `ResumeFilesDirectory`.
+
 ---
 
 ### 2. Run Auth API
@@ -107,4 +109,4 @@ Set your OpenAI key using user secrets:
 
 - Resume ingestion runs automatically on startup  
 - Supported format: `.docx`  
-- Make sure the resume folder path is accessible by the application  
+- Make sure the configured directories are accessible by the application  
