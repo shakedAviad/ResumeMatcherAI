@@ -1,13 +1,13 @@
 # ResumeMatcherAI
 ## Project Overview
 
-ResumeMatcher is an AI-powered system designed to index, search, and interact with candidate resumes using natural language.
+ResumeMatcherAI is an end-to-end AI system for ingesting, structuring, and matching candidate resumes using LLMs, vector search (RAG), and agent-based workflows.
+
+It replaces manual resume screening with an intelligent, automated pipeline that enables semantic search, AI-based ranking, and natural language interaction with candidate data.
 
 The system combines vector search (RAG) with multiple AI agents to provide accurate candidate matching and conversational exploration over a private resume database.
 
-Instead of relying on keyword-based filtering, users can describe their needs freely, and the system retrieves and ranks the most relevant candidates, while also allowing follow-up questions about each candidate.
-
-This project reflects my approach to building practical AI systems, combining clean architecture, agent-based design, and real-world problem solving.
+This project was designed and built independently, covering architecture, AI workflows, and full system implementation.
 ## Key Capabilities
 
 - Resume ingestion and automatic indexing on startup  
